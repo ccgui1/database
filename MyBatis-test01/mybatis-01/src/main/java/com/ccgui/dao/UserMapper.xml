@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccgui.dao.UserMapper">
+    <select id="getEmployList" resultType="com.ccgui.pojo.Employ">
+        select * from students.employ
+    </select>
+
+    <insert id="addEmployList"  parameterType="map">
+    insert into students.emp (id, worknu, workname, gender, age, idcard, city, entrydate) values (#{userid},#{userworknu}, #{userworkname}, #{usergender}, #{userage}, #{useridcard},#{usercity},#{userentrydate})
+    </insert>
+</mapper>

@@ -317,7 +317,7 @@ DELETE FROM 表名 [WHERE 条件];
 - 排序查询（ORDER BY）
 - 分页查询（LIMIT）
 
-## DDL-条件查询
+## DQL-条件查询
 1. 语法
 ```sql
 SELECT 字段列表  FROM  WHERE 条件列表;
@@ -334,7 +334,7 @@ SELECT 字段列表  FROM  WHERE 条件列表;
 | <>或!= | 不等于   |
 | BETWEEN...AND... | 在某个范围之内（含最小，最大值） |
 | IN(...)  | 在in之后的列表中的值，多选一 |
-| LIKE 占位符  | 模糊匹配（匹配单个字符，%匹配任意个字符） |
+| LIKE 占位符  | 模糊匹配（_匹配单个字符，%匹配任意个字符） |
 | IS NULL  | 是NULL  |
 
  
@@ -344,3 +344,130 @@ SELECT 字段列表  FROM  WHERE 条件列表;
 | AND 或 &&   | 并且（多个条件同时成立） |
 | OR 或 \|\|   | 或者（多个条件任意成立一个） |
 | NOT 或 !  | 非，不是  | 
+
+### 题目测试
+-  条件查询
+1. 查询年龄等于45的员工
+```sql
+SELECT * FROM employ WHERE age = 45;
+```
+
+2. 查询年龄小于30的员工信息
+```sql
+SELECT * FROM employ WHERE age < 30;
+```
+
+3. 查询没有身份证信息的员工信息
+```sql
+SELECT * FROM employ WHERE idcard is NULL;
+```
+
+4. 查询性别为女，且年龄小于40的员工信息
+```sql
+SELECT * FROM employ WHERE gender="女" AND age < 40;
+```
+
+5. 查询姓徐的员工信息。
+```sql
+SELECT * FROM employ WHERE workname LIKE "徐%";
+```
+
+6. 查询年龄等于18或20或40的员工信息
+```sql
+SELECT * FROM employ WHERE age IN(18,20,40);
+```
+
+7. 查询身份证是320开头的员工信息
+```SQL
+SELECT * FROM employ WHERE idcard LIKE "320%";
+```
+
+### 7.3 DQL-聚合函数（count,max,min,avg,sum）
+![](images/DQL语句.jpg)
+
+1. 介绍
+   将一列数据作为一个整体，进行纵向计算。
+
+2. 常见的聚合函数
+
+| 函数   |  功能   |
+| :------|:-------|
+| count | 统计数量 |
+| max   | 最大值   |
+| min   | 最小值   |
+| avg   | 平均值   |
+| sum   | 求和     | 
+
+3. 语法
+```sql
+SELECT 聚合函数(字段列表) FROM  表名;
+```
+4. 题目测试
+```sql
+-- 1. 统计该企业员工数
+SELECT count(id)  FROM employ;
+
+-- 2. 统计该企业的平均年龄
+SELECT AVG(age) FROM employ;
+
+-- 3. 统计该企业的最小和最大年龄
+SELECT MIN(age) FROM employ;
+
+SELECT MAX(age) FROM employ;
+
+-- 4. 统计男性年龄之和
+SELECT SUM(age) FROM employ WHERE gender="男";
+
+```
+
+注意：null值不参与所有聚合函数的运算。
+
+### 7.4 DQL-分组查询(GROUP BY)
+- DQL-分组查询
+1. 语法
+```SQL
+SELECT 字段列表 FROM 表名 [WHERE 条件] GROUP BY 分组字段名 [HAVING 分组后过滤条件];
+```
+2. where和having的区别
+- 执行时机不同：where是分组之前进行过滤，不满足where条件，不参与分组；而having是分组之后对结果进行过滤。
+- 判断条件不同：where不能对聚合函数进行判断，而having可以。
+
+3. 题目示例：
+```SQL
+-- 1. 根据性别分组，统计男性员工和女性员工的数量
+SELECT COUNT(*) as peoNum FROM employ GROUP BY gender
+
+-- 2. 根据性别分组，统计男性和女性员工的平均年龄
+SELECT AVG(age) AS avgAge FROM  employ GROUP BY gender;
+
+-- 3. 在查询年龄小于45的员工，并根据工作地址分组，获取员工数量大于等于3的工作地址
+SELECT   city,COUNT(*) as cityPeoNum FROM emp  WHERE age < 45 GROUP BY city HAVING cityPeoNum >= 3;
+
+```
+注意：
+- 执行顺序： where > 聚合函数 > having;
+- 分组之后，查询的字段一般为聚合函数和分组字段，查询其他字段无任何意义。
+
+### 7.5 DQL-排序查询
+1. 语法
+```sql
+SELECT 字段列表 FROM  表名 ORDER BY 字段1 排序方式，字段2 排序方式;
+```
+
+2. 排序方式
+- ASC：升序（默认值）
+- DESC: 降序
+
+注意：如果是多字段排序，当第一个字段值相同时，才会根据第二个字段进行排序。
+
+3. 题目示例
+```sql
+-- 根据入职时间对员工进行排序
+SELECT workname,entrydate FROM emp ORDER BY entrydate DESC;
+
+-- 根据对员工进行先进行年龄排序，然后跟入职时间排序
+SELECT workname,age,entrydate FROM emp ORDER BY age DESC,entrydate ASC;
+```
+
+
+
